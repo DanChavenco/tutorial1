@@ -11,7 +11,7 @@ interface SuccessResponseType {
   email: string,
   cellphone: string,
   teacher: boolean,
-  coins: Int16Array,
+  coins: number,
   courses: string[],
   available_hours: object[],
   available_locations: string[],
@@ -54,23 +54,6 @@ export default async(
       });
 
       res.status(200).json(response.ops[0]);
-    } else if (req.method === "GET") {
-      const { email } = req.body;
-
-      if (!email) {
-        res.status(400).json({error: "Missing e-mail on request body."});
-        return;
-      }
-
-      const { db } = await connect();
-
-      const response = await db.collection('users').findOne({ email });
-
-      if (!response) {
-        res.status(400).json({error: "User with this e-mail not found."});
-        return;
-      }
-      res.status(200).json(response);
     } else {
       res.status(400).json({error: "Wrong request method."})
     }
