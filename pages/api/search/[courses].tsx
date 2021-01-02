@@ -1,16 +1,16 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import connect  from '../../utils/database';
+import { NextApiRequest, NextApiResponse } from 'next'
+import connect from '../../../utils/database'
 
 interface ErrorResponseType {
   error: string;
-};
+}
 
 export default async(
   req:NextApiRequest, 
-  res: NextApiResponse<ErrorResponseType | object[]>
+  res: NextApiResponse<ErrorResponseType | Record<string, unknown>[]>
   ): Promise<void> => {
     if (req.method === "GET") {
-      const { courses } = req.body;
+      const courses = req.query.courses as string;
 
       if (!courses) {
         res.status(400).json({error: "Missing course name on request body."});
