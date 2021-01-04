@@ -12,7 +12,7 @@ interface SuccessResponseType {
   email: string,
   cellphone: string,
   teacher: boolean,
-  coins: Int16Array,
+  coins: number,
   courses: string[],
   available_hours: object[],
   available_locations: string[],

@@ -13,10 +13,18 @@ interface SuccessResponseType {
   teacher: boolean,
   coins: number,
   courses: string[],
-  available_hours: object[],
+  available_hours: IAvailableHours,
   available_locations: string[],
   appoitments: object[],
   reviews: object[]
+}
+
+interface IAvailableHours {
+  monday: number[],
+  tuesday: number[],
+  wednesday: number[],
+  thursday: number[],
+  friday: number[],
 }
 
 export default async(
@@ -24,7 +32,39 @@ export default async(
   res: NextApiResponse<ErrorResponseType | SuccessResponseType>
   ): Promise<void> => {
     if (req.method === "POST") {
-      const { name, email, cellphone, teacher, courses, available_hours, available_locations } = req.body;
+      const { 
+        name, 
+        email, 
+        cellphone, 
+        teacher, 
+        courses, 
+        available_hours, 
+        available_locations 
+      }: {
+        name: string, 
+        email: string, 
+        cellphone: string, 
+        teacher: string, 
+        courses: string[], 
+        available_hours: IAvailableHours,
+        available_locations: Record<string, number[]>
+      } = req.body;
+
+      // check if available hours is between 7:00 and 20:00
+      let invalidHour = false
+      for(const weekday in available_hours){
+        available_hours[weekday].forEach((hour) => {
+          if (hour < 7 || hour > 20) {
+            invalidHour = true
+            return;
+          }
+        })
+      }
+
+      if (invalidHour) {
+        res.status(400).json({error: "You cannot teach between 20:00 and 07:00."});
+        return;
+      }
 
       if (!teacher) {
         if (!name || !email || !cellphone) {
